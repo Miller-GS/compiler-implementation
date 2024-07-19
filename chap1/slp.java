@@ -38,14 +38,24 @@ class EseqExp extends Exp {
    EseqExp(Stm s, Exp e) {stm=s; exp=e;}
 }
 
-abstract class ExpList {}
+abstract class ExpList {
+    abstract int length();
+}
 
 class PairExpList extends ExpList {
    Exp head; ExpList tail;
    public PairExpList(Exp h, ExpList t) {head=h; tail=t;}
+
+   public int length() {
+       return 1 + tail.length();
+   }
 }
 
 class LastExpList extends ExpList {
    Exp head; 
    public LastExpList(Exp h) {head=h;}
+
+    public int length() {
+        return 1;
+    }
 }
