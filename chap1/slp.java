@@ -1,3 +1,6 @@
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 abstract class Stm {}
 
 class CompoundStm extends Stm {
@@ -40,15 +43,24 @@ class EseqExp extends Exp {
 
 abstract class ExpList {
     abstract int length();
+    abstract Exp getHead();
+
+    ExpListIterator iterator() {
+        return new ExpListIterator(this);
+    }
 }
 
 class PairExpList extends ExpList {
-   Exp head; ExpList tail;
-   public PairExpList(Exp h, ExpList t) {head=h; tail=t;}
+    Exp head; ExpList tail;
+    public PairExpList(Exp h, ExpList t) {head=h; tail=t;}
 
-   public int length() {
+    public int length() {
        return 1 + tail.length();
-   }
+    }
+
+    public Exp getHead() {
+        return this.head;
+    }
 }
 
 class LastExpList extends ExpList {
@@ -57,5 +69,36 @@ class LastExpList extends ExpList {
 
     public int length() {
         return 1;
+    }
+
+    public Exp getHead() {
+        return this.head;
+    }
+}
+
+class ExpListIterator implements Iterator<Exp> {
+    ExpList list;
+    
+    public ExpListIterator(ExpList list) {
+        this.list = list;
+    }
+
+    @Override
+    public boolean hasNext() {
+        return this.list != null;
+    }
+
+    public Exp next() {
+        if (!hasNext()) {
+            throw new NoSuchElementException();
+        }
+        Exp ret = list.getHead();
+        if (list instanceof PairExpList) {
+            this.list = ((PairExpList) list).tail;
+        } else {
+            this.list = null;
+        }
+
+        return ret;
     }
 }
